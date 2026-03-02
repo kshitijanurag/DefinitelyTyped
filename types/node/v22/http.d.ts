@@ -770,8 +770,8 @@ declare module "http" {
          * message.end();
          * ```
          *
-         * Attempting to set a header field name or value that contains invalid characters
-         * will result in a `TypeError` being thrown.
+         * Attempting to set a header field name or value that contains invalid characters will result in a
+         * [`TypeError`](https://nodejs.org/docs/latest-v22.x/api/errors.html#class-typeerror) being thrown.
          * @since v0.3.0
          */
         addTrailers(headers: OutgoingHttpHeaders | ReadonlyArray<[string, string]>): void;
@@ -927,8 +927,8 @@ declare module "http" {
          * will check whether `Content-Length` and the length of the body which has
          * been transmitted are equal or not.
          *
-         * Attempting to set a header field name or value that contains invalid characters
-         * will result in a \[`Error`\]\[\] being thrown.
+         * Attempting to set a header field name or value that contains invalid characters will result in a
+         * [`TypeError`](https://nodejs.org/docs/latest-v22.x/api/errors.html#class-typeerror) being thrown.
          * @since v0.1.30
          */
         writeHead(
