@@ -2094,6 +2094,9 @@ declare module "util/types" {
      */
     function isModuleNamespaceObject(value: unknown): boolean;
     /**
+     * **Note:** As of Node.js 24, `Error.isError()` is currently slower than `util.types.isNativeError()`. 
+     * If performance is critical, consider benchmarking both in your environment.
+     * 
      * Returns `true` if the value was returned by the constructor of a
      * [built-in `Error` type](https://tc39.es/ecma262/#sec-error-objects).
      *
