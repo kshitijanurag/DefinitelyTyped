@@ -612,6 +612,12 @@ declare module "tls" {
         checkServerIdentity?: typeof checkServerIdentity | undefined;
         servername?: string | undefined; // SNI TLS Extension
         session?: Buffer | undefined;
+        /**
+         * If `true`, specifies that the OCSP status request
+         * extension will be added to the client hello and an `'OCSPResponse'` event
+         * will be emitted on the socket before establishing a secure communication.
+         */
+        requestOCSP?: boolean | undefined;
         minDHSize?: number | undefined;
         lookup?: net.LookupFunction | undefined;
         timeout?: number | undefined;

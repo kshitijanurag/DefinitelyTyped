@@ -31,6 +31,7 @@ import {
     const connOpts: ConnectionOptions = {
         host: "127.0.0.1",
         port: 55,
+        requestOCSP: true,
         pskCallback(hint) {
             if (hint === "something??") {
                 return null;
