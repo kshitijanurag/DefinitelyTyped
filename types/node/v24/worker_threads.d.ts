@@ -131,7 +131,7 @@ declare module "worker_threads" {
          * * `value` may contain instances of builtin JS types such as `RegExp`s, `BigInt`s, `Map`s, `Set`s, etc.
          * * `value` may contain typed arrays, both using `ArrayBuffer`s
          * and `SharedArrayBuffer`s.
-         * * `value` may contain [`WebAssembly.Module`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/Module) instances.
+         * * `value` may contain [`WebAssembly.Module`](https://developer.mozilla.org/en-US/docs/WebAssembly/Reference/JavaScript_interface/Module) instances.
          * * `value` may not contain native (C++-backed) objects other than:
          *
          * ```js
@@ -759,12 +759,12 @@ declare module "worker_threads" {
      * takes its place.
      *
      * The returned `MessagePort` is an object in the target context and
-     * inherits from its global `Object` class. Objects passed to the [`port.onmessage()`](https://developer.mozilla.org/en-US/docs/Web/API/MessagePort/onmessage) listener are also created in the
+     * inherits from its global `Object` class. Objects passed to the [`port.onmessage()`](https://developer.mozilla.org/en-US/docs/Web/API/MessagePort/message_event) listener are also created in the
      * target context
      * and inherit from its global `Object` class.
      *
      * However, the created `MessagePort` no longer inherits from [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget), and only
-     * [`port.onmessage()`](https://developer.mozilla.org/en-US/docs/Web/API/MessagePort/onmessage) can be used to receive
+     * [`port.onmessage()`](https://developer.mozilla.org/en-US/docs/Web/API/MessagePort/message_event) can be used to receive
      * events using it.
      * @since v11.13.0
      * @param port The message port to transfer.
