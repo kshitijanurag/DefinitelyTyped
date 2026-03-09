@@ -606,10 +606,10 @@ declare module "process" {
                 /**
                  * The `process.argv` property returns an array containing the command-line
                  * arguments passed when the Node.js process was launched. The first element will
-                 * be {@link execPath}. See `process.argv0` if access to the original value
-                 * of `argv[0]` is needed. The second element will be the path to the JavaScript
-                 * file being executed. The remaining elements will be any additional command-line
-                 * arguments.
+                 * be {@link execPath `process.execPath()`}. See `process.argv0` if access to the original value
+                 * of `argv[0]` is needed. If a [program entry point](https://nodejs.org/api/cli.html#program-entry-point)
+                 * was provided, the second element will be the absolute path to it. The remaining elements are additional
+                 * command-line arguments.
                  *
                  * For example, assuming the following script for `process-args.js`:
                  *
