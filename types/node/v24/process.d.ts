@@ -1924,6 +1924,24 @@ declare module "process" {
                  */
                 traceDeprecation: boolean;
                 /**
+                 * The `process.traceProcessWarnings` property indicates whether the `--trace-warnings` flag
+                 * is set on the current Node.js process. This property allows programmatic control over the
+                 * tracing of warnings, enabling or disabling stack traces for warnings at runtime.
+                 *
+                 * ```js
+                 * // Enable trace warnings
+                 * process.traceProcessWarnings = true;
+                 *
+                 * // Emit a warning with a stack trace
+                 * process.emitWarning('Warning with stack trace');
+                 *
+                 * // Disable trace warnings
+                 * process.traceProcessWarnings = false;
+                 * ```
+                 * @since v6.10.0
+                 */
+                traceProcessWarnings: boolean;
+                /**
                  * An object is "refable" if it implements the Node.js "Refable protocol".
                  * Specifically, this means that the object implements the `Symbol.for('nodejs.ref')`
                  * and `Symbol.for('nodejs.unref')` methods. "Ref'd" objects will keep the Node.js

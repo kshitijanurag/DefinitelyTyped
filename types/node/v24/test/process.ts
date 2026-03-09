@@ -109,13 +109,21 @@ import { fileURLToPath } from "node:url";
     const arrayBuffers: number = usage.arrayBuffers;
     const rssFast: number = process.memoryUsage.rss();
 }
+
 {
     let strDict: NodeJS.Dict<string>;
     strDict = process.versions;
     strDict = p.versions;
 }
+
 {
     process.traceDeprecation = true;
+}
+
+{
+    process.traceProcessWarnings = true;
+    process.emitWarning("Warning with stack trace");
+    process.traceProcessWarnings = false;
 }
 
 {
