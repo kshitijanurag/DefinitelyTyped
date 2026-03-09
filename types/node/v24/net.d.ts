@@ -491,17 +491,46 @@ declare module "net" {
         prependOnceListener(event: "timeout", listener: () => void): this;
     }
     interface ListenOptions extends Abortable {
+        /**
+         * Common parameter of {@link Server.listen `server.listen()`} functions.
+         */
         backlog?: number | undefined;
-        exclusive?: boolean | undefined;
-        host?: string | undefined;
         /**
          * @default false
          */
+        exclusive?: boolean | undefined;
+        host?: string | undefined;
+        /**
+         * For TCP servers, setting `ipv6Only` to `true` will
+         * disable dual-stack support, i.e., binding to host `::` won't make
+         * `0.0.0.0` be bound.
+         * @default false
+         */
         ipv6Only?: boolean | undefined;
+        /**
+         * For TCP servers, setting `reusePort` to `true` allows
+         * multiple sockets on the same host to bind to the same port. Incoming connections
+         * are distributed by the operating system to listening sockets. This option is
+         * available only on some platforms, such as Linux 3.9+, DragonFlyBSD 3.6+, FreeBSD 12.0+,
+         * Solaris 11.4, and AIX 7.2.5+. On unsupported platforms, this option raises an error.
+         * @default false
+         */
         reusePort?: boolean | undefined;
+        /**
+         * Will be ignored if `port` is specified. See
+         * [Identifying paths for IPC connections](https://nodejs.org/docs/latest-v24.x/api/net.html#identifying-paths-for-ipc-connections).
+         */
         path?: string | undefined;
         port?: number | undefined;
+        /**
+         * For IPC servers makes the pipe readable for all users.
+         * @default false
+         */
         readableAll?: boolean | undefined;
+        /**
+         * For IPC servers makes the pipe writable for all users.
+         * @default false
+         */
         writableAll?: boolean | undefined;
     }
     interface ServerOpts {

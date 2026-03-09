@@ -44,15 +44,46 @@ declare module "dgram" {
     }
     type SocketType = "udp4" | "udp6";
     interface SocketOptions extends Abortable {
+        /**
+         * The family of socket. Must be either `'udp4'` or `'udp6'`. Required.
+         */
         type: SocketType;
+        /**
+         * When `true` [`socket.bind()`](https://nodejs.org/docs/latest-v24.x/api/dgram.html#socketbindport-address-callback) will reuse the
+         * address, even if another process has already bound a socket on it, but
+         * only one socket can receive the data.
+         * @default false
+         */
         reuseAddr?: boolean | undefined;
+        /**
+         * When `true` [`socket.bind()`](https://nodejs.org/docs/latest-v24.x/api/dgram.html#socketbindport-address-callback) will reuse the
+         * port, even if another process has already bound a socket on it. Incoming
+         * datagrams are distributed to listening sockets. The option is available
+         * only on some platforms, such as Linux 3.9+, DragonFlyBSD 3.6+, FreeBSD 12.0+,
+         * Solaris 11.4, and AIX 7.2.5+. On unsupported platforms, this option raises
+         * an error when the socket is bound.
+         * @default false
+         */
         reusePort?: boolean | undefined;
         /**
+         * Setting `ipv6Only` to `true` will
+         * disable dual-stack support, i.e., binding to address `::` won't make
+         * `0.0.0.0` be bound.
          * @default false
          */
         ipv6Only?: boolean | undefined;
+        /**
+         * Sets the `SO_RCVBUF` socket value.
+         */
         recvBufferSize?: number | undefined;
+        /**
+         * Sets the `SO_SNDBUF` socket value.
+         */
         sendBufferSize?: number | undefined;
+        /**
+         * Custom lookup function.
+         * @default dns.lookup()
+         */
         lookup?:
             | ((
                 hostname: string,
@@ -60,7 +91,18 @@ declare module "dgram" {
                 callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void,
             ) => void)
             | undefined;
+        /**
+         * `receiveBlockList` can be used for discarding
+         * inbound datagram to specific IP addresses, IP ranges, or IP subnets. This does not
+         * work if the server is behind a reverse proxy, NAT, etc. because the address
+         * checked against the blocklist is the address of the proxy, or the one
+         * specified by the NAT.
+         */
         receiveBlockList?: BlockList | undefined;
+        /**
+         * `sendBlockList` can be used for disabling outbound
+         * access to specific IP addresses, IP ranges, or IP subnets.
+         */
         sendBlockList?: BlockList | undefined;
     }
     /**
