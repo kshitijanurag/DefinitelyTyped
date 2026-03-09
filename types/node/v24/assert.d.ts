@@ -500,6 +500,86 @@ declare module "assert" {
          *
          * _Deep equality_ means that the enumerable "own" properties of child objects
          * are also recursively evaluated by the following rules.
+         *
+         * ### Comparison details
+         *
+         * * Primitive values are compared with the [`==` operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality),
+         * with the exception of [NaN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN). It is treated as being identical in case
+         * both sides are [NaN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN).
+         * * [Type tags](https://tc39.es/ecma262/#sec-object.prototype.tostring) of objects should be the same.
+         * * Only [enumerable "own" properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Enumerability_and_ownership_of_properties) are considered.
+         * * Object constructors are compared when available.
+         * * [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) names, messages, causes, and errors are always compared,
+         * even if these are not enumerable properties.
+         * * [Object wrappers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Data_structures#primitive_values) are compared both as objects and unwrapped values.
+         * * `Object` properties are compared unordered.
+         * * [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) keys
+         * and [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) items are compared unordered.
+         * * Recursion stops when both sides differ or either side encounters a circular reference.
+         * * Implementation does not test the [`[[Prototype]]`](https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots) of
+         * objects.
+         * * [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) properties are not compared.
+         * * [WeakMap](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap),
+         * [WeakSet](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet) and
+         * [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) instances are **not** compared
+         * structurally. They are only equal if they reference the same object. Any
+         * comparison between different `WeakMap`, `WeakSet`, or `Promise` instances
+         * will result in inequality, even if they contain the same content.
+         * * [RegExp](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) lastIndex, flags, and source
+         * are always compared, even if these are not enumerable properties.
+         *
+         * The following example does not throw an {@link AssertionError `AssertionError`} because the
+         * primitives are compared using the [`==` operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality).
+         *
+         * ```js
+         * import assert from 'node:assert';
+         * // WARNING: This does not throw an AssertionError!
+         *
+         * assert.deepEqual('+00000000', false);
+         * ```
+         *
+         * "Deep" equality means that the enumerable "own" properties of child objects are evaluated also:
+         *
+         * ```js
+         * import assert from 'node:assert';
+         *
+         * const obj1 = {
+         *   a: {
+         *     b: 1,
+         *   },
+         * };
+         * const obj2 = {
+         *   a: {
+         *     b: 2,
+         *   },
+         * };
+         * const obj3 = {
+         *   a: {
+         *     b: 1,
+         *   },
+         * };
+         * const obj4 = { __proto__: obj1 };
+         *
+         * assert.deepEqual(obj1, obj1);
+         * // OK
+         *
+         * // Values of b are different:
+         * assert.deepEqual(obj1, obj2);
+         * // AssertionError: { a: { b: 1 } } deepEqual { a: { b: 2 } }
+         *
+         * assert.deepEqual(obj1, obj3);
+         * // OK
+         *
+         * // Prototypes are ignored:
+         * assert.deepEqual(obj1, obj4);
+         * // AssertionError: { a: { b: 1 } } deepEqual {}
+         * ```
+         *
+         * If the values are not equal, an {@link AssertionError `AssertionError`} is thrown with a `message`
+         * property set equal to the value of the `message` parameter. If the `message`
+         * parameter is undefined, a default error message is assigned. If the `message`
+         * parameter is an instance of [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+         * then it will be thrown instead of the {@link AssertionError `AssertionError`}.
          * @since v0.1.21
          */
         function deepEqual(actual: unknown, expected: unknown, message?: string | Error): void;
