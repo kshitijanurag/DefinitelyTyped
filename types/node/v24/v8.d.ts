@@ -257,10 +257,36 @@ declare module "v8" {
      * Usage:
      *
      * ```js
-     * // Print GC events to stdout for one minute.
-     * import v8 from 'node:v8';
-     * v8.setFlagsFromString('--trace_gc');
-     * setTimeout(() => { v8.setFlagsFromString('--notrace_gc'); }, 60e3);
+     * import { setFlagsFromString } from 'node:v8';
+     * import { setInterval } from 'node:timers';
+     *
+     * // setFlagsFromString to trace garbage collection events
+     * setFlagsFromString('--trace-gc');
+     *
+     * // Trigger GC events by using some memory
+     * let arrays = [];
+     * const interval = setInterval(() => {
+     *   for (let i = 0; i < 500; i++) {
+     *     arrays.push(new Array(10000).fill(Math.random()));
+     *   }
+     *
+     *   if (arrays.length > 5000) {
+     *    arrays = arrays.slice(-1000);
+     *   }
+     *
+     *  console.log(`\n* Created ${arrays.length} arrays\n`);
+     * }, 100);
+     *
+     * // setFlagsFromString to stop tracing GC events after 1.5 seconds
+     * setTimeout(() => {
+     *   setFlagsFromString('--notrace-gc');
+     *   console.log('\nStopped tracing!\n');
+     * }, 1500);
+     *
+     * // Stop triggering GC events altogether after 2.5 seconds
+     * setTimeout(() => {
+     *   clearInterval(interval);
+     * }, 2500);
      * ```
      * @since v1.0.0
      */
@@ -325,7 +351,8 @@ declare module "v8" {
      *
      * ```js
      * // Print heap snapshot to the console
-     * import v8 from 'node:v8';
+     * import { getHeapSnapshot } from 'node:v8';
+     * import process from 'node:process';
      * const stream = v8.getHeapSnapshot();
      * stream.pipe(process.stdout);
      * ```
@@ -356,8 +383,10 @@ declare module "v8" {
      *   isMainThread,
      *   parentPort,
      * } from 'node:worker_threads';
+     * import { fileURLToPath } from 'node:url';
      *
      * if (isMainThread) {
+     *   const __filename = fileURLToPath(import.meta.url);
      *   const worker = new Worker(__filename);
      *
      *   worker.once('message', (filename) => {
@@ -457,7 +486,8 @@ declare module "v8" {
      * Sometimes a `Latin-1` string may also be represented as `UTF16`.
      *
      * ```js
-     * const { isStringOneByteRepresentation } = require('node:v8');
+     * import { isStringOneByteRepresentation } from 'node:v8';
+     * import { Buffer } from 'node:buffer';
      *
      * const Encoding = {
      *   latin1: 1,
@@ -466,13 +496,17 @@ declare module "v8" {
      * const buffer = Buffer.alloc(100);
      * function writeString(input) {
      *   if (isStringOneByteRepresentation(input)) {
+     *     console.log(`input: '${input}'`);
      *     buffer.writeUint8(Encoding.latin1);
      *     buffer.writeUint32LE(input.length, 1);
      *     buffer.write(input, 5, 'latin1');
+     *     console.log(`decoded: '${buffer.toString('latin1', 5, 5 + input.length)}'\n`);
      *   } else {
+     *     console.log(`input: '${input}'`);
      *     buffer.writeUint8(Encoding.utf16le);
      *     buffer.writeUint32LE(input.length * 2, 1);
      *     buffer.write(input, 5, 'utf16le');
+     *     console.log(`decoded: '${buffer.toString('utf16le', 5, 5 + input.length * 2)}'`);
      *   }
      * }
      * writeString('hello');
@@ -481,17 +515,6 @@ declare module "v8" {
      * @since v23.10.0, v22.15.0
      */
     function isStringOneByteRepresentation(content: string): boolean;
-    /**
-     * Starting a CPU profile then return a `SyncCPUProfileHandle` object. This API supports `using` syntax.
-     *
-     * ```js
-     * const handle = v8.startCpuProfile();
-     * const profile = handle.stop();
-     * console.log(profile);
-     * ```
-     * @since v24.12.0
-     */
-    function startCpuProfile(): SyncCPUProfileHandle;
     /**
      * @since v8.0.0
      */
@@ -543,8 +566,8 @@ declare module "v8" {
         writeRawBytes(buffer: NodeJS.ArrayBufferView): void;
     }
     /**
-     * A subclass of `Serializer` that serializes `TypedArray`(in particular `Buffer`) and `DataView` objects as host objects, and only
-     * stores the part of their underlying `ArrayBuffer`s that they are referring to.
+     * A subclass of {@link Serializer `Serializer`} that serializes `TypedArray` (in particular [`Buffer`](https://nodejs.org/docs/latest-v24.x/api/buffer.html))
+     * and `DataView` objects as host objects, and only stores the part of their underlying `ArrayBuffer`s that they are referring to.
      * @since v8.0.0
      */
     class DefaultSerializer extends Serializer {}
@@ -599,7 +622,7 @@ declare module "v8" {
         readRawBytes(length: number): Buffer;
     }
     /**
-     * A subclass of `Deserializer` corresponding to the format written by `DefaultSerializer`.
+     * A subclass of {@link Deserializer `Deserializer`} corresponding to the format written by {@link DefaultDeserializer `DefaultSerializer`}.
      * @since v8.0.0
      */
     class DefaultDeserializer extends Deserializer {}
@@ -821,38 +844,70 @@ declare module "v8" {
     }
     interface PromiseHooks {
         /**
-         * The `init` hook must be a plain function. Providing an async function will throw as it would produce an infinite microtask loop.
+         * **The `init` hook must be a plain function. Providing an async function will throw as it would produce an infinite microtask loop.**
+         *
+         * ```js
+         * import { promiseHooks } from 'node:v8';
+         *
+         * const stop = promiseHooks.onInit((promise, parent) => {});
+         * ```
          * @since v17.1.0, v16.14.0
          * @param init The {@link Init | `init` callback} to call when a promise is created.
          * @return Call to stop the hook.
          */
         onInit: (init: Init) => Function;
         /**
-         * The `settled` hook must be a plain function. Providing an async function will throw as it would produce an infinite microtask loop.
+         * **The `settled` hook must be a plain function. Providing an async function will throw as it would produce an infinite microtask loop.**
+         *
+         * ```js
+         * import { promiseHooks } from 'node:v8';
+         *
+         * const stop = promiseHooks.onSettled((promise) => {});
+         * ```
          * @since v17.1.0, v16.14.0
          * @param settled The {@link Settled | `settled` callback} to call when a promise is created.
          * @return Call to stop the hook.
          */
         onSettled: (settled: Settled) => Function;
         /**
-         * The `before` hook must be a plain function. Providing an async function will throw as it would produce an infinite microtask loop.
+         * **The `before` hook must be a plain function. Providing an async function will throw as it would produce an infinite microtask loop.**
+         *
+         * ```js
+         * import { promiseHooks } from 'node:v8';
+         *
+         * const stop = promiseHooks.onBefore((promise) => {});
+         * ```
          * @since v17.1.0, v16.14.0
          * @param before The {@link Before | `before` callback} to call before a promise continuation executes.
          * @return Call to stop the hook.
          */
         onBefore: (before: Before) => Function;
         /**
-         * The `after` hook must be a plain function. Providing an async function will throw as it would produce an infinite microtask loop.
+         * **The `after` hook must be a plain function. Providing an async function will throw as it would produce an infinite microtask loop.**
+         *
+         * ```
+         * import { promiseHooks } from 'node:v8';
+         *
+         * const stop = promiseHooks.onAfter((promise) => {});
+         * ```
          * @since v17.1.0, v16.14.0
          * @param after The {@link After | `after` callback} to call after a promise continuation executes.
          * @return Call to stop the hook.
          */
         onAfter: (after: After) => Function;
         /**
+         * **The hook callbacks must be plain functions. Providing async functions will
+         * throw as it would produce an infinite microtask loop.**
+         *
          * Registers functions to be called for different lifetime events of each promise.
-         * The callbacks `init()`/`before()`/`after()`/`settled()` are called for the respective events during a promise's lifetime.
-         * All callbacks are optional. For example, if only promise creation needs to be tracked, then only the init callback needs to be passed.
-         * The hook callbacks must be plain functions. Providing async functions will throw as it would produce an infinite microtask loop.
+         *
+         * The callbacks `init()`/`before()`/`after()`/`settled()` are called for the
+         * respective events during a promise's lifetime.
+         *
+         * All callbacks are optional. For example, if only promise creation needs to
+         * be tracked, then only the `init` callback needs to be passed. The
+         * specifics of all functions that can be passed to `callbacks` is in the
+         * [Hook Callbacks](https://nodejs.org/docs/latest-v24.x/api/v8.html#hook-callbacks) section.
          * @since v17.1.0, v16.14.0
          * @param callbacks The {@link HookCallbacks | Hook Callbacks} to register
          * @return Used for disabling hooks
