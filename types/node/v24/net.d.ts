@@ -28,12 +28,16 @@ declare module "net" {
         port: number;
     }
     interface SocketConstructorOpts {
-        fd?: number | undefined;
         allowHalfOpen?: boolean | undefined;
+        blocklist?: BlockList | undefined;
+        fd?: number | undefined;
+        keepAlive?: boolean | undefined;
+        keepAliveInitialDelay?: number | undefined;
+        noDelay?: boolean | undefined;
         onread?: OnReadOpts | undefined;
         readable?: boolean | undefined;
-        writable?: boolean | undefined;
         signal?: AbortSignal | undefined;
+        writable?: boolean | undefined;
     }
     interface OnReadOpts {
         buffer: Uint8Array | (() => Uint8Array);
@@ -45,16 +49,6 @@ declare module "net" {
         callback(bytesWritten: number, buffer: Uint8Array): boolean;
     }
     interface TcpSocketConnectOpts {
-        port: number;
-        host?: string | undefined;
-        localAddress?: string | undefined;
-        localPort?: number | undefined;
-        hints?: number | undefined;
-        family?: number | undefined;
-        lookup?: LookupFunction | undefined;
-        noDelay?: boolean | undefined;
-        keepAlive?: boolean | undefined;
-        keepAliveInitialDelay?: number | undefined;
         /**
          * @since v18.13.0
          */
@@ -63,7 +57,13 @@ declare module "net" {
          * @since v18.13.0
          */
         autoSelectFamilyAttemptTimeout?: number | undefined;
-        blockList?: BlockList | undefined;
+        family?: number | undefined;
+        hints?: number | undefined;
+        host?: string | undefined;
+        localAddress?: string | undefined;
+        localPort?: number | undefined;
+        lookup?: LookupFunction | undefined;
+        port: number;
     }
     interface IpcSocketConnectOpts {
         path: string;

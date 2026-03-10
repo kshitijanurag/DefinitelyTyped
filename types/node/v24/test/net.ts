@@ -58,6 +58,9 @@ import * as net from "node:net";
                 return true;
             },
         },
+        keepAlive: true,
+        keepAliveInitialDelay: 60_000,
+        noDelay: true,
         readable: false,
         writable: false,
     });
@@ -126,6 +129,9 @@ import * as net from "node:net";
     const constructorOpts: net.SocketConstructorOpts = {
         fd: 1,
         allowHalfOpen: false,
+        keepAlive: true,
+        keepAliveInitialDelay: 60_000,
+        noDelay: true,
         readable: false,
         writable: false,
     };
@@ -169,9 +175,6 @@ import * as net from "node:net";
             // nothing
         },
         port: 80,
-        keepAlive: true,
-        keepAliveInitialDelay: 1000,
-        noDelay: false,
         autoSelectFamily: false,
         autoSelectFamilyAttemptTimeout: 250,
     };
