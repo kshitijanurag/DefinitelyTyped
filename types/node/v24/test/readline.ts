@@ -157,6 +157,9 @@ const rl: readline.ReadLine = readline.createInterface(new stream.Readable());
     let _boolean: boolean;
 
     _rl = _rl.addListener("close", () => {});
+    _rl = _rl.addListener("error", (error) => {
+        const _error: Error = error;
+    });
     _rl = _rl.addListener("line", (input) => {
         const _input: string = input;
     });
@@ -170,6 +173,7 @@ const rl: readline.ReadLine = readline.createInterface(new stream.Readable());
     });
 
     _boolean = _rl.emit("close");
+    _boolean = _rl.emit("error");
     _boolean = _rl.emit("line");
     _boolean = _rl.emit("pause");
     _boolean = _rl.emit("resume");
@@ -179,6 +183,9 @@ const rl: readline.ReadLine = readline.createInterface(new stream.Readable());
     _boolean = _rl.emit("history");
 
     _rl = _rl.on("close", () => {});
+    _rl = _rl.on("error", (error) => {
+        const _error: Error = error;
+    });
     _rl = _rl.on("line", (input) => {
         const _input: string = input;
     });
@@ -192,6 +199,9 @@ const rl: readline.ReadLine = readline.createInterface(new stream.Readable());
     });
 
     _rl = _rl.once("close", () => {});
+    _rl = _rl.once("error", (error) => {
+        const _error: Error = error;
+    });
     _rl = _rl.once("line", (input) => {
         const _input: string = input;
     });
@@ -205,6 +215,9 @@ const rl: readline.ReadLine = readline.createInterface(new stream.Readable());
     });
 
     _rl = _rl.prependListener("close", () => {});
+    _rl = _rl.prependListener("error", (error) => {
+        const _error: Error = error;
+    });
     _rl = _rl.prependListener("line", (input) => {
         const _input: string = input;
     });
@@ -218,6 +231,9 @@ const rl: readline.ReadLine = readline.createInterface(new stream.Readable());
     });
 
     _rl = _rl.prependOnceListener("close", () => {});
+    _rl = _rl.prependOnceListener("error", (error) => {
+        const _error: Error = error;
+    });
     _rl = _rl.prependOnceListener("line", (input) => {
         const _input: string = input;
     });
