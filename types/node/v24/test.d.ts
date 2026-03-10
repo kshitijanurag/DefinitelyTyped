@@ -988,7 +988,6 @@ declare module "node:test" {
              * @since v22.2.0, v20.15.0
              */
             readonly assert: TestContextAssert;
-            readonly attempt: number;
             /**
              * This function is used to create a hook running before subtest of the current test.
              * @param fn The hook function. The first argument to this function is a `TestContext` object.
@@ -1051,6 +1050,21 @@ declare module "node:test" {
              * @since v18.8.0, v16.18.0
              */
             readonly name: string;
+            /**
+             * Indicated whether the test succeeded.
+             * @since v21.7.0, v20.12.0
+             */
+            readonly passed: boolean;
+            /**
+             * The failure reason for the test/case; wrapped and available via `context.error.cause`.
+             * @since v21.7.0, v20.12.0
+             */
+            readonly error: Error | null;
+            /**
+             * Number of times the test has been attempted.
+             * @since v24.7.0
+             */
+            readonly attempt: number;
             /**
              * This function is used to set the number of assertions and subtests that are expected to run
              * within the test. If the number of assertions and subtests that run does not match the
