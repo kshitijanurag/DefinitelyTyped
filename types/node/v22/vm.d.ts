@@ -38,7 +38,7 @@
  */
 declare module "vm" {
     import { NonSharedBuffer } from "node:buffer";
-    import { ImportAttributes, ImportPhase } from "node:module";
+    import { ImportAttributes } from "node:module";
     interface Context extends NodeJS.Dict<any> {}
     interface BaseOptions {
         /**
@@ -870,10 +870,6 @@ declare module "vm" {
          * provided.
          */
         attributes: ImportAttributes;
-        /**
-         * The phase of the requested module (`"source"` or `"evaluation"`).
-         */
-        phase: ImportPhase;
     }
     interface SourceTextModuleOptions extends Pick<ScriptOptions, "cachedData" | "columnOffset" | "lineOffset"> {
         /**
@@ -927,7 +923,6 @@ declare module "vm" {
          * import fooAlias from 'foo';
          * import bar from './bar.js';
          * import withAttrs from '../with-attrs.ts' with { arbitraryAttr: 'attr-val' };
-         * import source Module from 'wasm-mod.wasm';
          * ```
          *
          * The value of the `sourceTextModule.moduleRequests` will be:
@@ -936,27 +931,19 @@ declare module "vm" {
          * [
          *   {
          *     specifier: 'foo',
-         *     phase: 'evaluation',
+         *     attributes: {},
          *   },
          *   {
          *     specifier: 'foo',
          *     attributes: {},
-         *     phase: 'evaluation',
          *   },
          *   {
          *     specifier: './bar.js',
          *     attributes: {},
-         *     phase: 'evaluation',
          *   },
          *   {
          *     specifier: '../with-attrs.ts',
          *     attributes: { arbitraryAttr: 'attr-val' },
-         *     phase: 'evaluation',
-         *   },
-         *   {
-         *     specifier: 'wasm-mod.wasm',
-         *     attributes: {},
-         *     phase: 'source',
          *   },
          * ];
          * ```
